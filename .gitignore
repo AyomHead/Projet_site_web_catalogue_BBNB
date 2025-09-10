@@ -1,1 +1,25 @@
 
+# Fichiers de configuration sensibles
+/includes/config.php
+/includes/test-config.php
+
+# Fichiers de session PHP
+/sess_*
+/sessions/
+
+# Logs et fichiers temporaires
+*.log
+/logs/
+/tmp/
+
+# Fichiers d'environnement
+.env
+.env.local
+
+# Fichiers IDE
+.vscode/
+.idea/
+
+# Ignore les fichiers uploadés mais garde le dossier
+/uploads/*
+!/uploads/.htaccess
