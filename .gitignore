@@ -19,3 +19,7 @@
 # Fichiers IDE
 .vscode/
 .idea/
+
+# Ignore les fichiers uploadés mais garde le dossier
+/uploads/*
+!/uploads/.htaccess
