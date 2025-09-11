@@ -11,6 +11,7 @@ function areAvalaible(...$values){
 
 // Fonction pour la connexion de l’utlisateur
 function logedInUser($user){
+    $_SESSION['id'] = $user['id'];
     $_SESSION['email'] = $user['email'];
     $_SESSION['first_name'] = $user['first_name'];
     $_SESSION['role'] = $user['role'];
