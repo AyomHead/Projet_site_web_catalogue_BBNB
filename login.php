@@ -23,7 +23,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $password = $get_coordonnees['password'];
 
         // préparation de la requete pour vérifier les informations de l’utilisateur pour la connexion
-        $stmt = $pdo->prepare("SELECT first_name, email, pass_word, role FROM users WHERE email = ?");
+        $stmt = $pdo->prepare("SELECT id, first_name, email, pass_word, role FROM users WHERE email = ?");
         $stmt->execute([$email]); // execution de la commande
         $user = $stmt->fetch(PDO::FETCH_ASSOC); // récupération des données dans la variable locale
 
@@ -31,7 +31,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         if($user && password_verify($password, $user['pass_word'])){
             // demarrage de la session
             logedInUser($user);
-            $login_message = 'Content de vous revoir' . $user['first_name'] . ' !';
+            $login_message = 'Content de vous revoir ' . $user['first_name'] . ' !';
         }
         else{
             $error_message = "Identifiants incorrects";
@@ -42,43 +42,112 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Bookman:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <title>Connexion</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Font Awesome -->
-    <script src="https://kit.fontawesome.com/14273d579a.js" crossorigin="anonymous"></script>
-</head>
-<body>
-    <main>
-        <h2 class="text-center m-4 fw-bold"><i class="fas fa-sign-in-alt me-2" style="color: #0d6efd;"></i>Connexion</h2>
-        <p class="text-center fw-normal">Connectez-vous pour accéder à votre espace personnel</p>
-        <p class="text-center text-success fw-bold"><?php echo $login_message; ?></p>
-        <p class="text-center text-danger fw-bold"><?php echo $error_message; ?></p>
-        <div class="container container-div px-4 bg-light rounded-3 py-2">
-            <form method="post" class="mx-auto mt-4" style="max-width: 400px;">
-                <div class="mb-3">
-                    <label for="email" class="form-label fw-bold">Email</label>
-                    <input type="email" name = "email" class="form-control bg-outline-secondary" id="email" placeholder="Entrez votre email">
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Connexion</title>
+        <!-- Bootstrap 5 CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+        <style>
+            body {
+                background-color: #f8f9fa;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+            .page-section {
+                padding: 100px 0;
+            }
+            .section-title {
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+            .section-title h2 {
+                color: #3b5998;
+                font-weight: 700;
+            }
+            .section-title p {
+                color: #6c757d;
+                font-size: 1.1rem;
+            }
+            .card {
+                border: none;
+                border-radius: 12px;
+                box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            }
+            .form-container {
+                padding: 2rem;
+            }
+            .form-control:focus {
+                border-color: #3b5998ff;
+                box-shadow: 0 0 0 0.25rem rgba(59, 89, 152, 0.25);
+            }
+            .btn-primary {
+                background-color: #3b5998;
+                border-color: #3b5998;
+                padding: 0.75rem;
+                font-weight: 600;
+                transition: all 0.3s;
+            }
+            .btn-primary:hover {
+                background-color: #2d4373;
+                border-color: #2d4373;
+                transform: translateY(-2px);
+            }
+            .animate-in {
+                animation: fadeIn 0.5s ease-in-out;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .form-check-input:checked {
+                background-color: #3b5998;
+                border-color: #3b5998;
+            }
+        </style>
+    </head>
+    <body>
+        <section class="page-section" id="login">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8 col-lg-6">
+                        <div class="section-title">
+                            <h2><i class="fas fa-sign-in-alt me-2"></i> Connexion</h2>
+                            <p>Connectez-vous pour accéder à votre espace personnel</p>
+                        </div>
+                        <div class="card animate-in">
+                            <div class="form-container">
+                                <!-- Affichage des messages -->
+                                <p class="text-center text-success fw-bold"><?php echo $login_message ?? ''; ?></p>
+                                <p class="text-center text-danger fw-bold"><?php echo $error_message ?? ''; ?></p>
+                                <form method="post" class="mx-auto mt-4" style="max-width: 400px;">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label fw-bold">Email</label>
+                                        <input type="email" name="email" class="form-control bg-outline-secondary" id="email" placeholder="Entrez votre email" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label fw-bold">Mot de passe</label>
+                                        <input type="password" name="password" class="form-control" id="password" placeholder="Entrez votre mot de passe" required>
+                                    </div>
+                                    <a href="#" class="mt-2 mb-2 d-block text-center">Mot de passe oublié ?</a>
+                                    <button type="submit" class="btn btn-primary w-100 d-flex justify-content-center align-items-center mt-2">
+                                        <i class="fas fa-sign-in-alt me-2" style="color: white;"></i>Se connecter
+                                    </button>
+                                    <p class="text-center mt-3">
+                                        Pas encore de compte ? <a href="register.php" class="text-decoration-none">S'inscrire</a>
+                                    </p>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label fw-bold">Mot de passe</label>
-                    <input type="password" name = "password" class="form-control" id="password" placeholder="Entrez votre mot de passe">
-                </div>
-                <a href="#" class="mt-2 mb-2">Mot de passe oublié ?</a>
-                <button type="submit" class="btn btn-primary w-30 rounded-pill d-flex justify-content-center align-items-center mt-2"><i class="fas fa-sign-in-alt me-2 " style="color: white;"></i>Se connecter</button>
-                <div class="d-flex justify-content-center align-items-center mt-2">
-                    <p class="me-1 d-inline text-center">Pas encore de compte ? <a href="#" class="text-center">S'inscrire</a></p>
-                </div>
-            </form>
-        </div>
-    </main>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-</body>
+            </div>
+        </section>
+        <!-- Bootstrap 5 JS Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
 </html>
