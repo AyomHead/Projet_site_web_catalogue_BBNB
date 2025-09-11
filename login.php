@@ -1,7 +1,7 @@
 <?php session_start(); ?>
 
 <?php
-include_once("config.php");
+include_once("includes/config.php");
 include_once("auth_functions.php");
 
 $get_coordonnees = $_POST; //là pour récupérer l’email et la mot de passe de l’utilisateur pour la connexion sans afficher les données dans l’URL
@@ -13,7 +13,6 @@ if(!areAvalaible($get_coordonnees['email'], $get_coordonnees['password'])){
 elseif(!filter_var($get_coordonnees['email'], FILTER_VALIDATE_EMAIL)){
     echo("L’adresse email n’est pas valide");
     return;
-
 }
 else{
     // récupération des données du formulaire de connexion
