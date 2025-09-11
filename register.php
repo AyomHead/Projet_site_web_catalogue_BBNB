@@ -1,7 +1,7 @@
 <?php session_start(); ?>
 
 <?php
-include_once("config.php");
+include_once("includes/config.php");
 include_once("auth_functions.php");
 
 $regis_data = $_POST; // récupération des données d’inscription
@@ -12,8 +12,12 @@ $admin_secure_key = "MOt4cl5eSeu7Rep03oura40DmIn";
 //-------============================================================================================================================================
 // A revoir car il faut vérifier que les champs existent avant de les assigner aux variables et en plus il faut vérifier si elles ne sont pas vides (C’est réglé avec la fonction areAvalaible dans auth_functions.php)
 //-------============================================================================================================================================
-if(!areAvalaible($regis_data['name'], $regis_data['first_name'], $regis_data['email'], $regis_data['password'])){
+if(!areAvalaible($regis_data['name'], $regis_data['first_name'], $regis_data['email'], $regis_data['password1'], $regis_data['password2'])){
     echo("Vous devez remplir tous les champs");
+    return;
+}
+elseif($regis_data['password1'] !== $regis_data['password2']){
+    echo('Les mots de passe ne correspondent pas');
     return;
 }
 // validité du mail
@@ -27,7 +31,7 @@ else{
     $user_first = $regis_data['first_name'];
     $user_email = $regis_data['email'];
     $user_password = $regis_data['password'];
-    $admin_key = $regis_data['admin_key'];
+    $admin_key = $regis_data['admin_key'] ?? '';
 
     //sécuriasation du mot de passe, avec la methode password_hash
     $user_password = password_hash($user_password, PASSWORD_BCRYPT);
