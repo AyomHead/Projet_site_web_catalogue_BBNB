@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($action === 'reject') {
             updateReservationStatus($pdo, $reservation_id, 'Rejetée');
             /* $user_email = getUserEmailByReservation($pdo, $reservation_id);
-            /* if ($user_email) notifyUser($user_email, 'Rejetée'); */ 
+            /* if ($user_email) notifyUser($user_email, 'Rejetée'); */
         } else {
             $error_message = "Action invalide.";
         }
